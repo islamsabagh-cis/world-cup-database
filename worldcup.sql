@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.9 (Ubuntu 12.9-2.pgdg20.04+1)
--- Dumped by pg_dump version 12.9 (Ubuntu 12.9-2.pgdg20.04+1)
+-- Dumped from database version 12.22 (Ubuntu 12.22-0ubuntu0.20.04.4)
+-- Dumped by pg_dump version 12.22 (Ubuntu 12.22-0ubuntu0.20.04.4)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,21 +16,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE ONLY public.games DROP CONSTRAINT games_winner_id_fkey;
+ALTER TABLE ONLY public.games DROP CONSTRAINT games_opponent_id_fkey;
+ALTER TABLE ONLY public.teams DROP CONSTRAINT teams_pkey;
+ALTER TABLE ONLY public.teams DROP CONSTRAINT teams_name_key;
+ALTER TABLE ONLY public.games DROP CONSTRAINT games_pkey;
+ALTER TABLE public.teams ALTER COLUMN team_id DROP DEFAULT;
+ALTER TABLE public.games ALTER COLUMN game_id DROP DEFAULT;
+DROP SEQUENCE public.teams_team_id_seq;
+DROP TABLE public.teams;
+DROP SEQUENCE public.games_game_id_seq;
+DROP TABLE public.games;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
-
-DROP DATABASE worldcup;
---
--- Name: worldcup; Type: DATABASE; Schema: -; Owner: freecodecamp
---
-
-CREATE DATABASE worldcup WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C.UTF-8' LC_CTYPE = 'C.UTF-8';
-
-
-ALTER DATABASE worldcup OWNER TO freecodecamp;
-
-\connect worldcup
 
 --
 -- Name: games; Type: TABLE; Schema: public; Owner: freecodecamp
@@ -39,7 +38,7 @@ ALTER DATABASE worldcup OWNER TO freecodecamp;
 CREATE TABLE public.games (
     game_id integer NOT NULL,
     year integer NOT NULL,
-    round character varying(60) NOT NULL,
+    round character varying(255) NOT NULL,
     winner_id integer NOT NULL,
     opponent_id integer NOT NULL,
     winner_goals integer NOT NULL,
@@ -77,7 +76,7 @@ ALTER SEQUENCE public.games_game_id_seq OWNED BY public.games.game_id;
 
 CREATE TABLE public.teams (
     team_id integer NOT NULL,
-    name character varying(60) NOT NULL
+    name character varying(255) NOT NULL
 );
 
 
@@ -124,38 +123,38 @@ ALTER TABLE ONLY public.teams ALTER COLUMN team_id SET DEFAULT nextval('public.t
 --
 
 COPY public.games (game_id, year, round, winner_id, opponent_id, winner_goals, opponent_goals) FROM stdin;
-33	2018	Final	26	25	4	2
-34	2018	Third Place	28	27	2	0
-35	2018	Semi-Final	25	27	2	1
-36	2018	Semi-Final	26	28	1	0
-37	2018	Quarter-Final	25	29	3	2
-38	2018	Quarter-Final	27	30	2	0
-39	2018	Quarter-Final	28	31	2	1
-40	2018	Quarter-Final	26	32	2	0
-41	2018	Eighth-Final	27	33	2	1
-42	2018	Eighth-Final	30	34	1	0
-43	2018	Eighth-Final	28	35	3	2
-44	2018	Eighth-Final	31	36	2	0
-45	2018	Eighth-Final	25	37	2	1
-46	2018	Eighth-Final	29	38	2	1
-47	2018	Eighth-Final	32	39	2	1
-48	2018	Eighth-Final	26	40	4	3
-49	2014	Final	41	40	1	0
-50	2014	Third Place	42	31	3	0
-51	2014	Semi-Final	40	42	1	0
-52	2014	Semi-Final	41	31	7	1
-53	2014	Quarter-Final	42	43	1	0
-54	2014	Quarter-Final	40	28	1	0
-55	2014	Quarter-Final	31	33	2	1
-56	2014	Quarter-Final	41	26	1	0
-57	2014	Eighth-Final	31	44	2	1
-58	2014	Eighth-Final	33	32	2	0
-59	2014	Eighth-Final	26	45	2	0
-60	2014	Eighth-Final	41	46	2	1
-61	2014	Eighth-Final	42	36	2	1
-62	2014	Eighth-Final	43	47	2	1
-63	2014	Eighth-Final	40	34	1	0
-64	2014	Eighth-Final	28	48	2	1
+97	2018	Final	73	74	4	2
+98	2018	Third Place	75	76	2	0
+99	2018	Semi-Final	74	76	2	1
+100	2018	Semi-Final	73	75	1	0
+101	2018	Quarter-Final	74	77	3	2
+102	2018	Quarter-Final	76	78	2	0
+103	2018	Quarter-Final	75	79	2	1
+104	2018	Quarter-Final	73	80	2	0
+105	2018	Eighth-Final	76	81	2	1
+106	2018	Eighth-Final	78	82	1	0
+107	2018	Eighth-Final	75	83	3	2
+108	2018	Eighth-Final	79	84	2	0
+109	2018	Eighth-Final	74	85	2	1
+110	2018	Eighth-Final	77	86	2	1
+111	2018	Eighth-Final	80	87	2	1
+112	2018	Eighth-Final	73	88	4	3
+113	2014	Final	89	88	1	0
+114	2014	Third Place	90	79	3	0
+115	2014	Semi-Final	88	90	1	0
+116	2014	Semi-Final	89	79	7	1
+117	2014	Quarter-Final	90	91	1	0
+118	2014	Quarter-Final	88	75	1	0
+119	2014	Quarter-Final	79	81	2	1
+120	2014	Quarter-Final	89	73	1	0
+121	2014	Eighth-Final	79	92	2	1
+122	2014	Eighth-Final	81	80	2	0
+123	2014	Eighth-Final	73	93	2	0
+124	2014	Eighth-Final	89	94	2	1
+125	2014	Eighth-Final	90	84	2	1
+126	2014	Eighth-Final	91	95	2	1
+127	2014	Eighth-Final	88	82	1	0
+128	2014	Eighth-Final	75	96	2	1
 \.
 
 
@@ -164,30 +163,30 @@ COPY public.games (game_id, year, round, winner_id, opponent_id, winner_goals, o
 --
 
 COPY public.teams (team_id, name) FROM stdin;
-25	Croatia
-26	France
-27	England
-28	Belgium
-29	Russia
-30	Sweden
-31	Brazil
-32	Uruguay
-33	Colombia
-34	Switzerland
-35	Japan
-36	Mexico
-37	Denmark
-38	Spain
-39	Portugal
-40	Argentina
-41	Germany
-42	Netherlands
-43	Costa Rica
-44	Chile
-45	Nigeria
-46	Algeria
-47	Greece
-48	United States
+73	France
+74	Croatia
+75	Belgium
+76	England
+77	Russia
+78	Sweden
+79	Brazil
+80	Uruguay
+81	Colombia
+82	Switzerland
+83	Japan
+84	Mexico
+85	Denmark
+86	Spain
+87	Portugal
+88	Argentina
+89	Germany
+90	Netherlands
+91	Costa Rica
+92	Chile
+93	Nigeria
+94	Algeria
+95	Greece
+96	United States
 \.
 
 
@@ -195,14 +194,14 @@ COPY public.teams (team_id, name) FROM stdin;
 -- Name: games_game_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.games_game_id_seq', 64, true);
+SELECT pg_catalog.setval('public.games_game_id_seq', 128, true);
 
 
 --
 -- Name: teams_team_id_seq; Type: SEQUENCE SET; Schema: public; Owner: freecodecamp
 --
 
-SELECT pg_catalog.setval('public.teams_team_id_seq', 48, true);
+SELECT pg_catalog.setval('public.teams_team_id_seq', 96, true);
 
 
 --
@@ -248,3 +247,4 @@ ALTER TABLE ONLY public.games
 --
 -- PostgreSQL database dump complete
 --
+
