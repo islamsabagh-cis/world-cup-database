@@ -2,42 +2,73 @@
 
 if [[ $1 == "test" ]]
 then
-  PSQL="psql --username=postgres --dbname=worldcupstiff -t --no-align -c"
+  PSQL="psql --username=postgres --dbname=worldcuptest -t --no-align -c"
 else
   PSQL="psql --username=freecodecamp --dbname=worldcup -t --no-align -c"
 fi
 
-# تفريغ الجداول القديمة لضمان عدم تكرار البيانات عند إعادة التشغيل
-echo $($PSQL "TRUNCATE TABLE games, teams;")
-
-# قراءة ملف games.csv سطر بسطر (تخطي السطر الأول العناوين)
-cat games.csv | while IFS="," read YEAR ROUND WINNER OPPONENT WINNER_GOALS OPPONENT_GOALS
+# Do not change code above this line. Use the PSQL variable above to query your database.
+echo $($PSQL "TRUNCATE teams, games")
+cat games.csv | while IFS="," read year round winner opponent winner_goals opponent_goals 
+# echo $opponent
 do
-  if [[ $YEAR != "year" ]]
+  if [[ $opponent != opponent ]] 
   then
-    # 1. البحث عن الفريق الفائز (Winner) هل هو موجود مسبقاً؟
-    WINNER_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$WINNER'")
-    
-    # إذا لم يكن موجوداً، قم بإضافته إلى جدول teams
-    if [[ -z $WINNER_ID ]]
+    name=$($PSQL "SELECT name FROM teams WHERE name='$opponent'")
+    # echo $name
+    if [[ -z $name ]]
     then
-      INSERT_WINNER_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$WINNER')")
-      # جلب الـ ID الخاص به بعد الإضافه
-      WINNER_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$WINNER'")
+      INSERT_STUDENT_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$opponent')")
+        if [[ $INSERT_STUDENT_RESULT == "INSERT 0 1" ]]
+        then
+          echo Inserted into teams, $opponent
+        fi
     fi
-
-    # 2. البحث عن الفريق المنافس (Opponent) هل هو موجود مسبقاً؟
-    OPPONENT_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$OPPONENT'")
-    
-    # إذا لم يكن موجوداً، قم بإضافته إلى جدول teams
-    if [[ -z $OPPONENT_ID ]]
-    then
-      INSERT_OPPONENT_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$OPPONENT')")
-      # جلب الـ ID الخاص به بعد الإضافه
-      OPPONENT_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$OPPONENT'")
-    fi
-
-    # 3. إدخال بيانات المباراة في جدول games باستخدام الـ IDs الصحيحة
-    INSERT_GAME_RESULT=$($PSQL "INSERT INTO games(year, round, winner_id, opponent_id, winner_goals, opponent_goals) VALUES($YEAR, '$ROUND', $WINNER_ID, $OPPONENT_ID, $WINNER_GOALS, $OPPONENT_GOALS)")
+  # insert team
+    # INSERT_STUDENT_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$opponent') ON CONFLICT(name) DO UPDATE SET name = '$opponent'")
   fi
+  if [[ $winner != winner ]] 
+  then
+    name=$($PSQL "SELECT name FROM teams WHERE name='$winner'")
+    # echo $name
+    if [[ -z $name ]]
+    then
+      INSERT_STUDENT_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$winner')")
+        if [[ $INSERT_STUDENT_RESULT == "INSERT 0 1" ]]
+        then
+          echo Inserted into teams, $winner
+        fi
+    fi
+  fi
+done
+
+cat games.csv | while IFS="," read year round winner opponent winner_goals opponent_goals
+do
+ if [[ $winner != winner ]] 
+  then
+    winner_id=$($PSQL "SELECT team_id FROM teams WHERE name='$winner'")
+    echo $winner_id
+    if [[ -z $winner ]]
+    then
+    # get winner_id
+      winner_id=$($PSQL "SELECT team_id FROM teams WHERE name='$winner'")
+    fi
+  fi
+  if [[ $opponent != opponent ]] 
+  then
+    opponent_id=$($PSQL "SELECT team_id FROM teams WHERE name='$opponent'")
+    echo $opponent_id
+    if [[ -z $opponent ]]
+    then
+    # get opponent_id
+      opponent_id=$($PSQL "SELECT team_id FROM teams WHERE name='$opponent'")
+    fi
+      # insert into games
+  INSERT_MAJORS_COURSES_RESULT=$($PSQL "INSERT INTO games(year, round, winner_id, opponent_id, winner_goals, opponent_goals) VALUES('$year', '$round','$winner_id','$opponent_id',$winner_goals,$opponent_goals)")
+    if [[ $INSERT_MAJORS_COURSES_RESULT == "INSERT 0 1" ]]
+    then
+      echo Inserted into games, $year, $round,$winner,$opponent,$winner_goals,$opponent_goals
+    fi
+  fi
+
 done
